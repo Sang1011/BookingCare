@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BookingCare.Api/BookingCare.Api.csproj" />
+    <Project Path="src/BookingCare.Application/BookingCare.Application.csproj" />
+    <Project Path="src/BookingCare.Domain/BookingCare.Domain.csproj" />
+    <Project Path="src/BookingCare.Infrastructure/BookingCare.Infrastructure.csproj" />
+  </Folder>
+</Solution>
