@@ -1,5 +1,6 @@
 ﻿using BookingCare.Domain.Common;
 using BookingCare.Domain.Enums;
+using BookingCare.Domain.Events;
 
 namespace BookingCare.Domain.Entities.Auth
 {
@@ -39,8 +40,16 @@ namespace BookingCare.Domain.Entities.Auth
         public void RecordFailedLogin()
         {
             FailedLoginCount++;
+
+            if (FailedLoginCount == 4)
+                RaiseDomainEvent(new SuspiciousLoginAttemptEvent(Id, Email));
+
             if (FailedLoginCount >= 5)
+            {
                 LockedUntil = DateTime.UtcNow.AddMinutes(15);
+                RaiseDomainEvent(new AccountLockedEvent(Id, Email, LockedUntil.Value));
+            }
+
             Touch();
         }
 
