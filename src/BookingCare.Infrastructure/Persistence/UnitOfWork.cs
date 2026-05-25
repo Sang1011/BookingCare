@@ -1,4 +1,6 @@
 ﻿using BookingCare.Application.Common.Interfaces.Persistence;
+using BookingCare.Domain.Common;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +13,17 @@ namespace BookingCare.Infrastructure.Persistence
 
         public UnitOfWork(AppDbContext context) => _context = context;
 
-        public Task<int> SaveChangesAsync(CancellationToken ct = default)
-            => _context.SaveChangesAsync(ct);
+        public async Task<Result> SaveChangesAsync(CancellationToken ct = default)
+        {
+            try
+            {
+                await _context.SaveChangesAsync(ct);
+                return Result.Success();
+            }
+            catch (DbUpdateException ex)
+            {
+                return Result.Failure(new Error("Database.SaveFailed", ex.Message));
+            }
+        }
     }
 }
