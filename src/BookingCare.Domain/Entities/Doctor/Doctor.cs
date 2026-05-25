@@ -13,8 +13,6 @@ namespace BookingCare.Domain.Entities.Doctor
         public string? Bio { get; private set; }
         public decimal ConsultationFee { get; private set; }
         public string? AvatarUrl { get; private set; }
-
-        // Navigation
         public Specialty Specialty { get; private set; } = default!;
         public ICollection<DoctorSchedule> Schedules { get; private set; } = [];
 
@@ -26,7 +24,7 @@ namespace BookingCare.Domain.Entities.Doctor
         {
             return new Doctor
             {
-                Id = userId, // Doctor ID = User ID
+                Id = userId,
                 SpecialtyId = specialtyId,
                 LicenseNumber = licenseNumber,
                 YearsOfExperience = yearsOfExperience,
