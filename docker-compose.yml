@@ -7,22 +7,11 @@ services:
     environment:
       POSTGRES_DB: BookingCareDb
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: YourPassword123!
+      POSTGRES_PASSWORD: BookingCare123
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: bookingcare_pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@bookingcare.com
-      PGADMIN_DEFAULT_PASSWORD: admin123
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres
 
   redis:
     image: redis:7-alpine
