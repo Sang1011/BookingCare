@@ -1,4 +1,4 @@
-﻿using BookingCare.Application.Common.Interfaces;
+﻿using BookingCare.Application.Common.Interfaces.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Text;

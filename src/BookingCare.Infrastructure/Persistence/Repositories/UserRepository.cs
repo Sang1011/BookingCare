@@ -1,4 +1,4 @@
-﻿using BookingCare.Application.Common.Interfaces;
+﻿using BookingCare.Application.Common.Interfaces.Persistence;
 using BookingCare.Domain.Entities.Auth;
 using Microsoft.EntityFrameworkCore;
 using System;
