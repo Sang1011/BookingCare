@@ -1,5 +1,4 @@
-﻿using BookingCare.Application.Common.Interfaces;
-using BookingCare.Infrastructure.Persistence;
+﻿using BookingCare.Infrastructure.Persistence;
 using BookingCare.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +10,9 @@ using BookingCare.Infrastructure.Auth;
 using BookingCare.Infrastructure.Cache;
 using BookingCare.Infrastructure.Email;
 using Microsoft.IdentityModel.Tokens;
+using BookingCare.Application.Common.Interfaces.Services;
+using BookingCare.Application.Common.Interfaces.Persistence;
+using BookingCare.Application.Common.Interfaces.Security;
 
 namespace BookingCare.Infrastructure
 {
@@ -28,6 +30,7 @@ namespace BookingCare.Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddScoped<IDoctorRepository, DoctorRepository>();
 
             // Auth
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
@@ -38,6 +41,7 @@ namespace BookingCare.Infrastructure
             services.AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")!));
             services.AddScoped<ILoginAttemptService, RedisLoginAttemptService>();
+            services.AddScoped<IEmailVerificationService, RedisEmailVerificationService>();
 
             // Email
             services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
