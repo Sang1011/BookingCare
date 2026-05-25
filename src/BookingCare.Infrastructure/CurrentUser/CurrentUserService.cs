@@ -1,4 +1,4 @@
-﻿using BookingCare.Application.Common.Interfaces;
+﻿using BookingCare.Application.Common.Interfaces.Security;
 using BookingCare.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;

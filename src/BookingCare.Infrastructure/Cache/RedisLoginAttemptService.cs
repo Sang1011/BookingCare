@@ -1,4 +1,4 @@
-﻿using BookingCare.Application.Common.Interfaces;
+﻿using BookingCare.Application.Common.Interfaces.Security;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
