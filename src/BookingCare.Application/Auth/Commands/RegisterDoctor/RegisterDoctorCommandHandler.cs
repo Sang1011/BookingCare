@@ -7,9 +7,6 @@ using BookingCare.Domain.Entities.Doctor;
 using BookingCare.Domain.Enums;
 using BookingCare.Domain.Errors;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BookingCare.Application.Auth.Commands.RegisterDoctor
 {
@@ -50,7 +47,7 @@ namespace BookingCare.Application.Auth.Commands.RegisterDoctor
             );
             _userRepo.Add(user);
 
-            var doctorResult = Doctor.Create(
+            var doctor = Doctor.Create(
                 user.Id,
                 request.SpecialtyId,
                 request.LicenseNumber,
@@ -58,7 +55,7 @@ namespace BookingCare.Application.Auth.Commands.RegisterDoctor
                 request.ConsultationFee,
                 request.Bio
             );
-            _doctorRepo.Add(doctorResult);
+            _doctorRepo.Add(doctor);
 
             await _uow.SaveChangesAsync(ct);
 
