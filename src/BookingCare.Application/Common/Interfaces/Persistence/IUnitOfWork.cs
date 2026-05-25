@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BookingCare.Application.Common.Interfaces
+namespace BookingCare.Application.Common.Interfaces.Persistence
 {
     public interface IUnitOfWork
     {
