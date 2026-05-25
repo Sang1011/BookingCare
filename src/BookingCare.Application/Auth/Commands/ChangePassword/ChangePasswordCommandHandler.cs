@@ -1,4 +1,6 @@
-﻿using BookingCare.Application.Common.Interfaces;
+﻿using BookingCare.Application.Common.Interfaces.Persistence;
+using BookingCare.Application.Common.Interfaces.Security;
+using BookingCare.Application.Common.Interfaces.Services;
 using BookingCare.Domain.Common;
 using BookingCare.Domain.Errors;
 using MediatR;

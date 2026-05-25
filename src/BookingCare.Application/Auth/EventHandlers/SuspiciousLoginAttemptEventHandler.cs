@@ -1,4 +1,4 @@
-﻿using BookingCare.Application.Common.Interfaces;
+﻿using BookingCare.Application.Common.Interfaces.Services;
 using BookingCare.Application.Common.Models;
 using BookingCare.Domain.Events;
 using MediatR;

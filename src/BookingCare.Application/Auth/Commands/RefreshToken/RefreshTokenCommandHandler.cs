@@ -1,9 +1,10 @@
-﻿using BookingCare.Application.Common.Interfaces;
-using BookingCare.Application.Common.Models;
+﻿using BookingCare.Application.Common.Models;
 using BookingCare.Domain.Common;
 using BookingCare.Domain.Errors;
 using RefreshTokenEntity = BookingCare.Domain.Entities.Auth.RefreshToken;
 using MediatR;
+using BookingCare.Application.Common.Interfaces.Services;
+using BookingCare.Application.Common.Interfaces.Persistence;
 
 namespace BookingCare.Application.Auth.Commands.RefreshToken
 {
