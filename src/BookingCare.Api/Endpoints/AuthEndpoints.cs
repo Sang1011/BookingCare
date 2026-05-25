@@ -1,13 +1,13 @@
-﻿using BookingCare.Application.Auth.Commands.ChangePassword;
-using BookingCare.Application.Auth.Commands.Login;
-using BookingCare.Application.Auth.Commands.Logout;
-using BookingCare.Application.Auth.Commands.RefreshToken;
-using BookingCare.Application.Auth.Commands.Register;
-using BookingCare.Application.Auth.Commands.RegisterDoctor;
-using BookingCare.Application.Auth.Commands.VerifyEmail;
-using BookingCare.Application.Auth.DTOs;
-using BookingCare.Application.Auth.Queries.GetCurrentUser;
+﻿using BookingCare.Application.Modules.Auth.Commands.Logout;
+using BookingCare.Application.Modules.Auth.Commands.VerifyEmail;
+using BookingCare.Application.Modules.Auth.Queries.GetCurrentUser;
 using BookingCare.Application.Common.Models;
+using BookingCare.Application.Modules.Auth.Commands.ChangePassword;
+using BookingCare.Application.Modules.Auth.Commands.Login;
+using BookingCare.Application.Modules.Auth.Commands.RefreshToken;
+using BookingCare.Application.Modules.Auth.Commands.Register;
+using BookingCare.Application.Modules.Auth.Commands.RegisterDoctor;
+using BookingCare.Application.Modules.Auth.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
