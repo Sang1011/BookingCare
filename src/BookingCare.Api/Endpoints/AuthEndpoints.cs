@@ -66,7 +66,7 @@ namespace BookingCare.Api.Endpoints
                 .Produces<ProblemDetails>(403)
                 .RequireAuthorization();
 
-            group.MapPost("/verify-email", VerifyEmail)
+            group.MapGet("/verify-email", VerifyEmail)
                 .WithSummary("Xác nhận email")
                 .WithDescription("Xác nhận email bằng token nhận được qua email sau khi đăng ký")
                 .Produces(200)
@@ -136,12 +136,13 @@ namespace BookingCare.Api.Endpoints
         }
 
         private static async Task<IResult> VerifyEmail(
-            VerifyEmailCommand command, ISender sender)
+            [FromQuery] string token, ISender sender, IConfiguration config)
         {
-            var result = await sender.Send(command);
+            var result = await sender.Send(new VerifyEmailCommand(token));
+            var frontendUrl = config["Frontend:BaseUrl"];
             return result.IsSuccess
-                ? Results.Ok("Email xác nhận thành công!")
-                : Results.Problem(result.Error!.Message, statusCode: 400);
+                ? Results.Redirect($"{frontendUrl}/verify-success")
+                : Results.Redirect($"{frontendUrl}/verify-failed");
         }
 
     }
