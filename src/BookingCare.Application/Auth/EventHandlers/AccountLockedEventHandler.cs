@@ -2,9 +2,6 @@
 using BookingCare.Application.Common.Models;
 using BookingCare.Domain.Events;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BookingCare.Application.Auth.EventHandlers
 {
