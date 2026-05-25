@@ -17,23 +17,17 @@ namespace BookingCare.Application.Auth.Commands.Register
         private readonly IDoctorRepository _doctorRepo;
         private readonly IUnitOfWork _uow;
         private readonly IPasswordService _passwordService;
-        private readonly IEmailVerificationService _emailVerificationService;
-        private readonly IEmailService _emailService;
 
         public RegisterDoctorCommandHandler(
             IUserRepository userRepo,
             IDoctorRepository doctorRepo,
             IUnitOfWork uow,
-            IPasswordService passwordService,
-            IEmailVerificationService emailVerificationService,
-            IEmailService emailService)
+            IPasswordService passwordService)
         {
             _userRepo = userRepo;
             _doctorRepo = doctorRepo;
             _uow = uow;
             _passwordService = passwordService;
-            _emailVerificationService = emailVerificationService;
-            _emailService = emailService;
         }
 
         public async Task<Result<UserDto>> Handle(
@@ -65,22 +59,6 @@ namespace BookingCare.Application.Auth.Commands.Register
             _doctorRepo.Add(doctor);
 
             await _uow.SaveChangesAsync(ct);
-
-            var token = await _emailVerificationService.GenerateTokenAsync(user.Id, ct);
-            await _emailService.SendAsync(
-                user.Email,
-                "Xác nhận tài khoản BookingCare",
-                $"""
-                <h2>Xin chào Bác sĩ {user.FullName}!</h2>
-                <p>Tài khoản bác sĩ của bạn đã được tạo thành công.</p>
-                <p>Vui lòng xác nhận email bằng cách bấm vào link bên dưới:</p>
-                <a href="http://localhost:5273/api/v1/auth/verify-email?token={token}">
-                    Xác nhận email
-                </a>
-                <p>Link có hiệu lực trong 24 giờ.</p>
-                """,
-                ct);
-
             return Result<UserDto>.Success(UserDto.FromEntity(user));
         }
     }
