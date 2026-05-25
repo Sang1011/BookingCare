@@ -18,8 +18,6 @@ namespace BookingCare.Domain.Entities.Booking
         public string? CancellationReason { get; private set; }
         public CancelledBy? CancelledBy { get; private set; }
         public Guid? RescheduledFromId { get; private set; }
-
-        // Navigation
         public DoctorSchedule DoctorSchedule { get; private set; } = default!;
 
         private Booking() { }

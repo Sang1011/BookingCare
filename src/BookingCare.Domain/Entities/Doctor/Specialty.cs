@@ -1,19 +1,49 @@
 ﻿using BookingCare.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using BookingCare.Domain.Errors;
 
-namespace BookingCare.Domain.Entities.Doctor
+namespace BookingCare.Domain.Entities.Doctor;
+
+public class Specialty : AuditableEntity
 {
-    public class Specialty : BaseEntity
+    public string Name { get; private set; } = string.Empty;
+    public string? Description { get; private set; }
+    public bool IsActive { get; private set; }
+
+    private Specialty() { }
+
+    public static Result<Specialty> Create(string name, string? description = null)
     {
-        public string Name { get; private set; } = default!;
-        public string? Description { get; private set; }
-        public bool IsActive { get; private set; } = true;
+        if (string.IsNullOrWhiteSpace(name))
+            return Result<Specialty>.Failure(SpecialtyErrors.NameRequired);
 
-        private Specialty() { }
+        if (name.Length > 200)
+            return Result<Specialty>.Failure(SpecialtyErrors.NameTooLong);
 
-        public static Specialty Create(string name, string? description) =>
-            new() { Name = name, Description = description };
+        var specialty = new Specialty
+        {
+            Name = name.Trim(),
+            Description = description?.Trim(),
+            IsActive = true
+        };
+
+        specialty.Touch();
+        return Result<Specialty>.Success(specialty);
     }
+
+    public Result Update(string name, string? description)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return Result.Failure(SpecialtyErrors.NameRequired);
+
+        if (name.Length > 200)
+            return Result.Failure(SpecialtyErrors.NameTooLong);
+
+        Name = name.Trim();
+        Description = description?.Trim();
+        Touch();
+        return Result.Success();
+    }
+
+    public void Deactivate() => IsActive = false;
+    public void Activate() => IsActive = true;
 }

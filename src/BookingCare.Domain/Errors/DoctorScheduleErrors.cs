@@ -7,19 +7,15 @@ namespace BookingCare.Domain.Errors
 {
     public static class DoctorScheduleErrors
     {
-        public static readonly Error InvalidSlotTime =
-            new("DoctorSchedule.InvalidSlotTime", "SlotEnd phải sau SlotStart");
-
-        public static readonly Error AlreadyExpired =
-            new("DoctorSchedule.AlreadyExpired", "Slot này đã qua giờ khám");
-
-        public static readonly Error HasExistingBooking =
-            new("DoctorSchedule.HasExistingBooking", "Không thể xóa slot đã có booking");
-
-        public static readonly Error NotFound =
-            new("DoctorSchedule.NotFound", "Không tìm thấy lịch làm việc");
-
-        public static readonly Error DuplicateSlot =
-            new("DoctorSchedule.DuplicateSlot", "Bác sĩ đã có lịch trong khung giờ này");
+        public static readonly Error NotFound = new("DoctorSchedule.NotFound", "Không tìm thấy lịch làm việc.");
+        public static readonly Error InvalidDoctorId = new("DoctorSchedule.InvalidDoctorId", "DoctorId không hợp lệ.");
+        public static readonly Error WorkDateInPast = new("DoctorSchedule.WorkDateInPast", "Ngày làm việc không được là ngày trong quá khứ.");
+        public static readonly Error InvalidSlotRange = new("DoctorSchedule.InvalidSlotRange", "Giờ kết thúc phải sau giờ bắt đầu.");
+        public static readonly Error InvalidMaxPatients = new("DoctorSchedule.InvalidMaxPatients", "Số bệnh nhân tối đa phải lớn hơn 0.");
+        public static readonly Error SlotOutsideWorkingHours = new("DoctorSchedule.SlotOutsideWorkingHours", "Slot phải trong giờ làm việc (7:00 - 17:00).");
+        public static readonly Error SlotConflict = new("DoctorSchedule.SlotConflict", "Bác sĩ đã có lịch làm việc trong khung giờ này.");
+        public static readonly Error HasActiveBookings = new("DoctorSchedule.HasActiveBookings", "Không thể xóa lịch đã có booking.");
+        public static readonly Error SlotExpired = new("DoctorSchedule.SlotExpired", "Slot này đã qua giờ hiện tại.");
+        public static readonly Error SlotUnavailable = new("DoctorSchedule.SlotUnavailable", "Slot này không còn khả dụng.");
     }
 }
