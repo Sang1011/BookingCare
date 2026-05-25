@@ -4,11 +4,17 @@ using BookingCare.Application;
 using BookingCare.Infrastructure;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((ctx, config) =>
     config.ReadFrom.Configuration(ctx.Configuration));
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
