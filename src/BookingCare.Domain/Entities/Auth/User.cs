@@ -12,18 +12,16 @@ namespace BookingCare.Domain.Entities.Auth
         public string? Phone { get; private set; }
         public DateOnly? DateOfBirth { get; private set; }
         public UserRole Role { get; private set; }
-        public bool IsActive { get; private set; } = true;
-        public int FailedLoginCount { get; private set; }
-        public DateTime? LockedUntil { get; private set; }
+        public bool IsActive { get; private set; } = false;
 
         private User() { }
 
         public static User Create(
-        string email, string passwordHash,
-        string fullName, string? phone,
-        DateOnly? dateOfBirth, UserRole role = UserRole.Patient)
+            string email, string passwordHash,
+            string fullName, string? phone,
+            DateOnly? dateOfBirth, UserRole role = UserRole.Patient)
         {
-            return new User
+            var user = new User
             {
                 Email = email.ToLowerInvariant(),
                 PasswordHash = passwordHash,
@@ -32,37 +30,20 @@ namespace BookingCare.Domain.Entities.Auth
                 DateOfBirth = dateOfBirth,
                 Role = role
             };
-        }
 
-        public bool IsLocked() =>
-        LockedUntil.HasValue && LockedUntil > DateTime.UtcNow;
-
-        public void RecordFailedLogin()
-        {
-            FailedLoginCount++;
-
-            if (FailedLoginCount == 4)
-                RaiseDomainEvent(new SuspiciousLoginAttemptEvent(Id, Email));
-
-            if (FailedLoginCount >= 5)
-            {
-                LockedUntil = DateTime.UtcNow.AddMinutes(15);
-                RaiseDomainEvent(new AccountLockedEvent(Id, Email, LockedUntil.Value));
-            }
-
-            Touch();
-        }
-
-        public void ResetFailedLogin()
-        {
-            FailedLoginCount = 0;
-            LockedUntil = null;
-            Touch();
+            user.RaiseDomainEvent(new EmailVerificationRequestedEvent(user.Id, user.Email, string.Empty));
+            return user;
         }
 
         public void ChangePassword(string newPasswordHash)
         {
             PasswordHash = newPasswordHash;
+            Touch();
+        }
+
+        public void Activate()
+        {
+            IsActive = true;
             Touch();
         }
     }

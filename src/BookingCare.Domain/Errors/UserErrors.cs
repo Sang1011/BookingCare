@@ -21,5 +21,8 @@ namespace BookingCare.Domain.Errors
 
         public static readonly Error Inactive =
             new("User.Inactive", "Tài khoản không còn hoạt động");
+
+        public static readonly Error InvalidVerificationToken =
+            new("User.InvalidVerificationToken", "Token xác nhận không hợp lệ hoặc đã hết hạn");
     }
 }
