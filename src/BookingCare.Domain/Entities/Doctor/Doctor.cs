@@ -4,7 +4,7 @@ using BookingCare.Domain.Errors;
 
 namespace BookingCare.Domain.Entities.Doctor;
 
-public sealed class Doctor : AuditableEntity
+public class Doctor : AuditableEntity
 {
     public Guid SpecialtyId { get; private set; }
     public string LicenseNumber { get; private set; } = string.Empty;
