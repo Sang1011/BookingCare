@@ -1,7 +1,9 @@
-﻿using BookingCare.Application.Common.Interfaces.Persistence;
+﻿using BookingCare.Application.Common.Models;
+using BookingCare.Application.Common.Interfaces.Persistence;
 using BookingCare.Application.Modules.Doctors.DTOs;
 using BookingCare.Domain.Common;
 using MediatR;
+
 
 namespace BookingCare.Application.Modules.Doctors.Queries.GetDoctors
 {
