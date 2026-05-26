@@ -17,5 +17,6 @@ namespace BookingCare.Domain.Errors
         public static readonly Error HasActiveBookings = new("DoctorSchedule.HasActiveBookings", "Không thể xóa lịch đã có booking.");
         public static readonly Error SlotExpired = new("DoctorSchedule.SlotExpired", "Slot này đã qua giờ hiện tại.");
         public static readonly Error SlotUnavailable = new("DoctorSchedule.SlotUnavailable", "Slot này không còn khả dụng.");
+        public static readonly Error DoctorMismatch = new("DoctorSchedule.DoctorMismatch", "Slot mới phải thuộc cùng bác sĩ với lịch hẹn gốc.");
     }
 }
