@@ -20,5 +20,6 @@ namespace BookingCare.Application.Common.Interfaces.Persistence
             CancellationToken ct = default);
 
         Task<bool> HasActiveBookingsAsync(Guid scheduleId, CancellationToken ct = default);
+        Task<DoctorSchedule?> GetByIdWithDoctorAsync(Guid scheduleId, CancellationToken ct = default);
     }
 }
