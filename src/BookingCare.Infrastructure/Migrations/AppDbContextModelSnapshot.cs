@@ -216,12 +216,6 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<int>("MaxPatients")
                         .HasColumnType("integer");
 
-                    b.Property<uint>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
                     b.Property<TimeOnly>("SlotEnd")
                         .HasColumnType("time without time zone");
 
@@ -233,6 +227,12 @@ namespace BookingCare.Infrastructure.Migrations
 
                     b.Property<DateOnly>("WorkDate")
                         .HasColumnType("date");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 

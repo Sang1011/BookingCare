@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BookingCare.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260526070104_AddBookingModule")]
+    [Migration("20260526070808_AddBookingModule")]
     partial class AddBookingModule
     {
         /// <inheritdoc />
@@ -219,12 +219,6 @@ namespace BookingCare.Infrastructure.Migrations
                     b.Property<int>("MaxPatients")
                         .HasColumnType("integer");
 
-                    b.Property<uint>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
                     b.Property<TimeOnly>("SlotEnd")
                         .HasColumnType("time without time zone");
 
@@ -236,6 +230,12 @@ namespace BookingCare.Infrastructure.Migrations
 
                     b.Property<DateOnly>("WorkDate")
                         .HasColumnType("date");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 

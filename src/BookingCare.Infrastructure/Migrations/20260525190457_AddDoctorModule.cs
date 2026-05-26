@@ -15,11 +15,6 @@ namespace BookingCare.Infrastructure.Migrations
                 name: "FK_Doctors_Specialties_SpecialtyId",
                 table: "Doctors");
 
-            migrationBuilder.RenameColumn(
-                name: "RowVersion",
-                table: "DoctorSchedules",
-                newName: "xmin");
-
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Specialties",
@@ -52,16 +47,6 @@ namespace BookingCare.Infrastructure.Migrations
                 type: "timestamp with time zone",
                 nullable: false,
                 defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.AlterColumn<uint>(
-                name: "xmin",
-                table: "DoctorSchedules",
-                type: "xid",
-                rowVersion: true,
-                nullable: false,
-                oldClrType: typeof(byte[]),
-                oldType: "bytea",
-                oldRowVersion: true);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "CreatedAt",
@@ -222,11 +207,6 @@ namespace BookingCare.Infrastructure.Migrations
                 name: "UpdatedAt",
                 table: "Doctors");
 
-            migrationBuilder.RenameColumn(
-                name: "xmin",
-                table: "DoctorSchedules",
-                newName: "RowVersion");
-
             migrationBuilder.AlterColumn<string>(
                 name: "Name",
                 table: "Specialties",
@@ -245,16 +225,6 @@ namespace BookingCare.Infrastructure.Migrations
                 oldType: "character varying(500)",
                 oldMaxLength: 500,
                 oldNullable: true);
-
-            migrationBuilder.AlterColumn<byte[]>(
-                name: "RowVersion",
-                table: "DoctorSchedules",
-                type: "bytea",
-                rowVersion: true,
-                nullable: false,
-                oldClrType: typeof(uint),
-                oldType: "xid",
-                oldRowVersion: true);
 
             migrationBuilder.AlterColumn<string>(
                 name: "LicenseNumber",
