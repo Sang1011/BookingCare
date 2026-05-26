@@ -10,8 +10,11 @@ namespace BookingCare.Infrastructure.Persistence.Configurations
         {
             builder.HasKey(d => d.Id);
 
-            builder.Property(d => d.RowVersion)
-                .IsRowVersion();
+            builder.Property(d => d.xmin)
+            .HasColumnName("xmin")
+            .HasColumnType("xid")
+            .ValueGeneratedOnAddOrUpdate()
+            .IsConcurrencyToken();
 
             builder.HasOne(d => d.Doctor)
             .WithMany(d => d.Schedules)
