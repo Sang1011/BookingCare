@@ -1,4 +1,4 @@
-﻿using BookingCare.Application.Common.Interfaces.Security;
+﻿using BookingCare.Application.Common.Models;
 using BookingCare.Application.Modules.Doctors.Commands.CreateSchedule;
 using BookingCare.Application.Modules.Doctors.Commands.DeleteSchedule;
 using BookingCare.Application.Modules.Doctors.Commands.VerifyDoctor;
@@ -6,7 +6,6 @@ using BookingCare.Application.Modules.Doctors.DTOs;
 using BookingCare.Application.Modules.Doctors.Queries.GetAvailableSlots;
 using BookingCare.Application.Modules.Doctors.Queries.GetDoctorById;
 using BookingCare.Application.Modules.Doctors.Queries.GetDoctors;
-using BookingCare.Domain.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -62,7 +61,6 @@ namespace BookingCare.Api.Endpoints
 
             return app;
         }
-
         private static async Task<IResult> GetDoctors(
             ISender sender,
             [FromQuery] string? searchName = null,
