@@ -38,5 +38,12 @@ namespace BookingCare.Infrastructure.Persistence.Repositories
             => await _context.Bookings.AnyAsync(b =>
                 b.DoctorScheduleId == scheduleId &&
                 b.Status != Domain.Enums.BookingStatus.Cancelled, ct);
+
+        public async Task<DoctorSchedule?> GetByIdWithDoctorAsync(
+            Guid scheduleId,
+            CancellationToken ct = default)
+            => await _dbSet
+                .Include(s => s.Doctor)
+                .FirstOrDefaultAsync(s => s.Id == scheduleId, ct);
     }
 }
