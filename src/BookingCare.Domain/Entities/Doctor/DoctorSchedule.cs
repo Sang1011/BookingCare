@@ -12,7 +12,7 @@ public class DoctorSchedule : AuditableEntity
     public TimeOnly SlotEnd { get; private set; }
     public int MaxPatients { get; private set; }
     public bool IsAvailable { get; private set; }
-    public uint RowVersion { get; private set; }
+    public uint xmin { get; private set; }
     public Doctor Doctor { get; private set; } = null!;
 
     private DoctorSchedule() { }
