@@ -1,6 +1,7 @@
 using BookingCare.Api.Endpoints;
 using BookingCare.Api.Middleware;
 using BookingCare.Application;
+using BookingCare.Domain.Enums;
 using BookingCare.Infrastructure;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -58,6 +59,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("DoctorOrAdmin", policy =>
+        policy.RequireRole(UserRole.Doctor.ToString(), UserRole.Admin.ToString()));
+
+    options.AddPolicy("PatientOrAdmin", policy =>
+        policy.RequireRole(UserRole.Patient.ToString(), UserRole.Admin.ToString()));
+
+    options.AddPolicy("PatientOrDoctor", policy =>
+        policy.RequireRole(UserRole.Patient.ToString(), UserRole.Doctor.ToString()));
+});
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

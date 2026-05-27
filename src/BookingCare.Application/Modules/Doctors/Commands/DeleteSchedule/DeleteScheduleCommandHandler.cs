@@ -1,11 +1,9 @@
 ﻿using BookingCare.Application.Common.Interfaces.Persistence;
 using BookingCare.Application.Common.Interfaces.Security;
 using BookingCare.Domain.Common;
+using BookingCare.Domain.Enums;
 using BookingCare.Domain.Errors;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BookingCare.Application.Modules.Doctors.Commands.DeleteSchedule
 {
@@ -23,8 +21,8 @@ namespace BookingCare.Application.Modules.Doctors.Commands.DeleteSchedule
             if (schedule is null)
                 return Result.Failure(DoctorScheduleErrors.NotFound);
 
-            if (currentUser.Role.ToString() == "Doctor" && schedule.DoctorId != currentUser.UserId)
-                return Result.Failure(DoctorErrors.NotFound);
+            if (currentUser.Role != UserRole.Admin && schedule.DoctorId != currentUser.UserId)
+                return Result.Failure(CommonErrors.Unauthorized);
 
             var hasBookings = await scheduleRepository.HasActiveBookingsAsync(
                 request.ScheduleId, cancellationToken);

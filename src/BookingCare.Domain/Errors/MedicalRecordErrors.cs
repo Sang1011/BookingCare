@@ -15,8 +15,5 @@ namespace BookingCare.Domain.Errors
 
         public static readonly Error AlreadyExists =
             new("MedicalRecord.AlreadyExists", "A medical record already exists for this booking.");
-
-        public static readonly Error Unauthorized =
-            new("MedicalRecord.Unauthorized", "You are not authorized to perform this action.");
     }
 }

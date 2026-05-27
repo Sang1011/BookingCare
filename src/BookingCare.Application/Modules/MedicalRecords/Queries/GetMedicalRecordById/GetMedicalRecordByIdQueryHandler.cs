@@ -23,8 +23,8 @@ namespace BookingCare.Application.Modules.MedicalRecords.Queries.GetMedicalRecor
             if (dto is null)
                 return Result<MedicalRecordDto>.Failure(MedicalRecordErrors.NotFound);
 
-            if (currentUser.Role.Equals(UserRole.Patient.ToString()) && dto.PatientId != currentUser.UserId)
-                return Result<MedicalRecordDto>.Failure(MedicalRecordErrors.Unauthorized);
+            if (currentUser.Role == UserRole.Patient && dto.PatientId != currentUser.UserId)
+                return Result<MedicalRecordDto>.Failure(CommonErrors.Unauthorized);
 
             return Result<MedicalRecordDto>.Success(dto);
         }

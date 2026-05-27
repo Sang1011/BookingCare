@@ -25,8 +25,8 @@ public class CreateMedicalRecordCommandHandler(
 
         var doctorId = booking.DoctorSchedule.DoctorId;
 
-        if (doctorId != currentUser.UserId && !currentUser.Role.Equals(UserRole.Admin.ToString()))
-            return Result<MedicalRecordDto>.Failure(MedicalRecordErrors.Unauthorized);
+        if (doctorId != currentUser.UserId && currentUser.Role != UserRole.Admin)
+            return Result<MedicalRecordDto>.Failure(CommonErrors.Unauthorized);
 
         if (booking.Status != BookingStatus.Completed)
             return Result<MedicalRecordDto>.Failure(MedicalRecordErrors.BookingNotCompleted);

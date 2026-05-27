@@ -40,7 +40,7 @@ namespace BookingCare.Api.Endpoints
                 .Produces<DoctorScheduleDto>(201)
                 .Produces<ProblemDetails>(400)
                 .Produces<ProblemDetails>(403)
-                .RequireAuthorization();
+                .RequireAuthorization(MultiRole.DoctorOrAdmin.ToString());
 
             group.MapDelete("/schedules/{scheduleId:guid}", DeleteSchedule)
                 .WithSummary("Xóa lịch khám")
@@ -49,7 +49,7 @@ namespace BookingCare.Api.Endpoints
                 .Produces<ProblemDetails>(400)
                 .Produces<ProblemDetails>(403)
                 .Produces<ProblemDetails>(404)
-                .RequireAuthorization();
+                .RequireAuthorization(MultiRole.DoctorOrAdmin.ToString());
 
             group.MapPost("/{id:guid}/verify", VerifyDoctor)
                 .WithSummary("Xác minh bác sĩ")

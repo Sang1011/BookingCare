@@ -19,8 +19,8 @@ namespace BookingCare.Application.Modules.MedicalRecords.Commands.UpdateMedicalR
             if (record is null)
                 return Result.Failure(MedicalRecordErrors.NotFound);
 
-            if (record.DoctorId != currentUser.UserId && !currentUser.Role.Equals(UserRole.Admin.ToString()))
-                return Result.Failure(MedicalRecordErrors.Unauthorized);
+            if (record.DoctorId != currentUser.UserId && currentUser.Role != UserRole.Admin)
+                return Result.Failure(CommonErrors.Unauthorized);
 
             var result = record.Update(request.Diagnosis, request.Prescription, request.Notes);
             if (result.IsFailure) return result;

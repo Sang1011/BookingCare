@@ -19,7 +19,7 @@ namespace BookingCare.Application.Modules.MedicalRecords.Queries.GetMedicalRecor
         public async Task<Result<PagedResult<MedicalRecordDto>>> Handle(
             GetMedicalRecordsQuery request, CancellationToken cancellationToken)
         {
-            var patientId = currentUser.Role.Equals(UserRole.Patient.ToString())
+            var patientId = currentUser.Role == UserRole.Patient
                 ? currentUser.UserId
                 : (Guid?)null;
 
