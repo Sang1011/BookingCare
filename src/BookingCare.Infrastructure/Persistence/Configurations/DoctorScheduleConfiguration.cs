@@ -10,16 +10,31 @@ namespace BookingCare.Infrastructure.Persistence.Configurations
         {
             builder.HasKey(d => d.Id);
 
+            builder.OwnsOne(d => d.TimeSlot, ts =>
+            {
+                ts.Property(t => t.WorkDate)
+                  .HasColumnName("work_date")
+                  .IsRequired();
+
+                ts.Property(t => t.SlotStart)
+                  .HasColumnName("slot_start")
+                  .IsRequired();
+
+                ts.Property(t => t.SlotEnd)
+                  .HasColumnName("slot_end")
+                  .IsRequired();
+            });
+
             builder.Property(d => d.xmin)
-            .HasColumnName("xmin")
-            .HasColumnType("xid")
-            .ValueGeneratedOnAddOrUpdate()
-            .IsConcurrencyToken();
+                .HasColumnName("xmin")
+                .HasColumnType("xid")
+                .ValueGeneratedOnAddOrUpdate()
+                .IsConcurrencyToken();
 
             builder.HasOne(d => d.Doctor)
-            .WithMany(d => d.Schedules)
-            .HasForeignKey(d => d.DoctorId)
-            .OnDelete(DeleteBehavior.Cascade);
+                .WithMany(d => d.Schedules)
+                .HasForeignKey(d => d.DoctorId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

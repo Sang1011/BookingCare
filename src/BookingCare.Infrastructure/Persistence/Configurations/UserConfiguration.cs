@@ -13,24 +13,20 @@ namespace BookingCare.Infrastructure.Persistence.Configurations
         {
             builder.HasKey(u => u.Id);
 
-            builder.Property(u => u.Email)
-                .IsRequired()
-                .HasMaxLength(256);
+            builder.OwnsOne(u => u.Email, e =>
+            {
+                e.Property(x => x.Value)
+                 .HasColumnName("email")
+                 .HasMaxLength(256)
+                 .IsRequired();
 
-            builder.HasIndex(u => u.Email).IsUnique();
+                e.HasIndex(x => x.Value).IsUnique();
+            });
 
-            builder.Property(u => u.PasswordHash)
-                .IsRequired();
-
-            builder.Property(u => u.FullName)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            builder.Property(u => u.Phone)
-                .HasMaxLength(11);
-
-            builder.Property(u => u.Role)
-                .HasConversion<string>();
+            builder.Property(u => u.PasswordHash).IsRequired();
+            builder.Property(u => u.FullName).IsRequired().HasMaxLength(100);
+            builder.Property(u => u.Phone).HasMaxLength(11);
+            builder.Property(u => u.Role).HasConversion<string>();
         }
     }
 }

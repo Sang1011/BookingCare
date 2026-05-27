@@ -7,12 +7,12 @@ using System.Text;
 namespace BookingCare.Application.Modules.Auth.DTOs
 {
     public record UserDto(
-    Guid Id,
-    string Email,
-    string FullName,
-    string? Phone,
-    DateOnly? DateOfBirth,
-    string Role 
+        Guid Id,
+        string Email,
+        string FullName,
+        string? Phone,
+        DateOnly? DateOfBirth,
+        string Role 
     )
         {
             public static UserDto FromEntity(User user) => new(

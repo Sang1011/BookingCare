@@ -23,7 +23,7 @@ namespace BookingCare.Application.Modules.Auth.EventHandlers
             DomainEventNotification<EmailVerificationRequestedEvent> notification,
             CancellationToken ct)
         {
-            var e = notification.Event;
+            var e = notification.DomainEvent;
 
             var token = await _emailVerificationService.GenerateTokenAsync(e.UserId, ct);
 

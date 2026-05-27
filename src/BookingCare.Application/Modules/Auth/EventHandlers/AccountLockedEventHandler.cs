@@ -16,7 +16,7 @@ namespace BookingCare.Application.Modules.Auth.EventHandlers
         public async Task Handle(
             DomainEventNotification<AccountLockedEvent> notification, CancellationToken ct)
         {
-            var e = notification.Event;
+            var e = notification.DomainEvent;
             await _emailService.SendAsync(
                 e.Email,
                 "🔒 Tài khoản bị tạm khóa",

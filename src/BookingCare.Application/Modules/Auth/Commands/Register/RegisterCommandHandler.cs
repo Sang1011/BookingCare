@@ -34,7 +34,7 @@ namespace BookingCare.Application.Modules.Auth.Commands.Register
 
             var passwordHash = _passwordService.Hash(request.Password);
 
-            var user = User.Create(
+            var userResult = User.Create(
                 request.Email,
                 passwordHash,
                 request.FullName,
@@ -42,6 +42,11 @@ namespace BookingCare.Application.Modules.Auth.Commands.Register
                 request.DateOfBirth,
                 UserRole.Patient
             );
+
+            if (userResult.IsFailure)
+                return Result<UserDto>.Failure(userResult.Error!);
+
+            var user = userResult.Value!;
 
             _userRepo.Add(user);
             await _uow.SaveChangesAsync(ct);

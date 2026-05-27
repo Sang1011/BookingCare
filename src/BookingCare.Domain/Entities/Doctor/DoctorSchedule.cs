@@ -1,19 +1,21 @@
 ﻿using BookingCare.Domain.Common;
 using BookingCare.Domain.Errors;
 using BookingCare.Domain.Events;
+using BookingCare.Domain.ValueObjects;
 
 namespace BookingCare.Domain.Entities.Doctor;
 
 public class DoctorSchedule : AuditableEntity
 {
     public Guid DoctorId { get; private set; }
-    public DateOnly WorkDate { get; private set; }
-    public TimeOnly SlotStart { get; private set; }
-    public TimeOnly SlotEnd { get; private set; }
+    public TimeSlot TimeSlot { get; private set; } = default!;
     public int MaxPatients { get; private set; }
     public bool IsAvailable { get; private set; }
     public uint xmin { get; private set; }
     public Doctor Doctor { get; private set; } = null!;
+    public DateOnly WorkDate => TimeSlot.WorkDate;
+    public TimeOnly SlotStart => TimeSlot.SlotStart;
+    public TimeOnly SlotEnd => TimeSlot.SlotEnd;
 
     private DoctorSchedule() { }
 
@@ -27,27 +29,18 @@ public class DoctorSchedule : AuditableEntity
         if (doctorId == Guid.Empty)
             return Result<DoctorSchedule>.Failure(DoctorScheduleErrors.InvalidDoctorId);
 
-        if (workDate < DateOnly.FromDateTime(DateTime.UtcNow.Date))
-            return Result<DoctorSchedule>.Failure(DoctorScheduleErrors.WorkDateInPast);
-
-        if (slotEnd <= slotStart)
-            return Result<DoctorSchedule>.Failure(DoctorScheduleErrors.InvalidSlotRange);
-
         if (maxPatients < 1)
             return Result<DoctorSchedule>.Failure(DoctorScheduleErrors.InvalidMaxPatients);
 
-        var workStart = new TimeOnly(7, 0);
-        var workEnd = new TimeOnly(17, 0);
-
-        if (slotStart < workStart || slotEnd > workEnd)
-            return Result<DoctorSchedule>.Failure(DoctorScheduleErrors.SlotOutsideWorkingHours);
+        // Validation giờ nằm trong TimeSlot
+        var slotResult = TimeSlot.Create(workDate, slotStart, slotEnd);
+        if (slotResult.IsFailure)
+            return Result<DoctorSchedule>.Failure(slotResult.Error!);
 
         var schedule = new DoctorSchedule
         {
             DoctorId = doctorId,
-            WorkDate = workDate,
-            SlotStart = slotStart,
-            SlotEnd = slotEnd,
+            TimeSlot = slotResult.Value!,
             MaxPatients = maxPatients,
             IsAvailable = true
         };
@@ -56,11 +49,8 @@ public class DoctorSchedule : AuditableEntity
         schedule.RaiseDomainEvent(new DoctorScheduleCreatedEvent(schedule.Id, doctorId, workDate, slotStart));
         return Result<DoctorSchedule>.Success(schedule);
     }
-
-    public bool IsExpired() =>
-        WorkDate < DateOnly.FromDateTime(DateTime.UtcNow.Date) ||
-        (WorkDate == DateOnly.FromDateTime(DateTime.UtcNow.Date) &&
-         SlotStart < TimeOnly.FromDateTime(DateTime.UtcNow));
+    
+    public bool IsExpired() => TimeSlot.IsExpired();
 
     public void MarkUnavailable() => IsAvailable = false;
     public void MarkAvailable() => IsAvailable = true;

@@ -37,7 +37,7 @@ namespace BookingCare.Application.Modules.Auth.Commands.RegisterDoctor
                 return Result<UserDto>.Failure(UserErrors.EmailAlreadyExists);
 
             var passwordHash = _passwordService.Hash(request.Password);
-            var user = User.Create(
+            var userResult = User.Create(
                 request.Email,
                 passwordHash,
                 request.FullName,
@@ -45,6 +45,11 @@ namespace BookingCare.Application.Modules.Auth.Commands.RegisterDoctor
                 request.DateOfBirth,
                 UserRole.Doctor
             );
+
+            if (userResult.IsFailure)
+                return Result<UserDto>.Failure(userResult.Error!);
+
+            var user = userResult.Value!;
             _userRepo.Add(user);
 
             var doctorResult = Doctor.Create(

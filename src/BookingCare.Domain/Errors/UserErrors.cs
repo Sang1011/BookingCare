@@ -24,5 +24,8 @@ namespace BookingCare.Domain.Errors
 
         public static readonly Error InvalidVerificationToken =
             new("User.InvalidVerificationToken", "Token xác nhận không hợp lệ hoặc đã hết hạn");
+
+        public static readonly Error EmailRequired = new("User.EmailRequired", "Email is required.");
+        public static readonly Error InvalidEmailFormat = new("User.InvalidEmailFormat", "Email format is invalid.");
     }
 }
