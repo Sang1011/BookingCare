@@ -25,6 +25,8 @@ namespace BookingCare.Infrastructure.Persistence
         public DbSet<DoctorSchedule> DoctorSchedules => Set<DoctorSchedule>();
         public DbSet<Booking> Bookings => Set<Booking>();
         public DbSet<MedicalRecord> MedicalRecords => Set<MedicalRecord>();
+        public DbSet<PrescriptionItem> PrescriptionItems => Set<PrescriptionItem>();
+        public DbSet<MedicalRecordAttachment> MedicalRecordAttachments => Set<MedicalRecordAttachment>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

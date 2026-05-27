@@ -13,16 +13,23 @@ namespace BookingCare.Infrastructure.Persistence.Repositories
 
         public async Task<MedicalRecord?> GetEntityByIdAsync(Guid id, CancellationToken ct = default)
             => await _dbSet
+                .Include(m => m.PrescriptionItems)
+                .Include(m => m.Attachments)
                 .FirstOrDefaultAsync(m => m.Id == id, ct);
 
         public async Task<bool> ExistsForBookingAsync(Guid bookingId, CancellationToken ct = default)
             => await _dbSet.AnyAsync(m => m.BookingId == bookingId, ct);
 
         public async Task<(IReadOnlyList<MedicalRecordDto> Items, int TotalCount)> GetPagedByPatientAsync(
-            Guid patientId, int page, int pageSize, CancellationToken ct = default)
+            Guid patientId,
+            int page,
+            int pageSize,
+            CancellationToken ct = default)
         {
             var query = Project().Where(m => m.PatientId == patientId);
+
             var total = await query.CountAsync(ct);
+
             var items = await query
                 .OrderByDescending(m => m.VisitDate)
                 .Skip((page - 1) * pageSize)
@@ -37,10 +44,7 @@ namespace BookingCare.Infrastructure.Persistence.Repositories
 
         private IQueryable<MedicalRecordDto> Project()
             => _dbSet
-                .Include(m => m.Booking)
-                    .ThenInclude(b => b.DoctorSchedule)
-                        .ThenInclude(s => s.Doctor)
-                            .ThenInclude(d => d.Specialty)
+                .AsNoTracking()
                 .Select(m => new MedicalRecordDto(
                     m.Id,
                     m.BookingId,
@@ -51,9 +55,29 @@ namespace BookingCare.Infrastructure.Persistence.Repositories
                     m.Booking.DoctorSchedule.Doctor.Specialty.Name,
                     m.VisitDate,
                     m.Diagnosis,
-                    m.Prescription,
+                    m.Treatment,
                     m.Notes,
+                    m.FollowUpDate,
+                    m.PrescriptionItems
+                        .Select(p => new PrescriptionItemDto(
+                            p.Id,
+                            p.MedicineName,
+                            p.Dosage,
+                            p.Frequency,
+                            p.Duration,
+                            p.Instructions))
+                        .ToList(),
+                    m.Attachments
+                        .Select(a => new MedicalRecordAttachmentDto(
+                            a.Id,
+                            a.FileName,
+                            a.FileUrl,
+                            a.FileSize,
+                            a.ContentType,
+                            a.UploadedAt))
+                        .ToList(),
                     m.CreatedAt,
-                    m.UpdatedAt));
+                    m.UpdatedAt
+                ));
     }
 }

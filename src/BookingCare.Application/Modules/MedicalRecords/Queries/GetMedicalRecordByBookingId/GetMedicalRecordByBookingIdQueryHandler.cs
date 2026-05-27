@@ -22,7 +22,7 @@ namespace BookingCare.Application.Modules.MedicalRecords.Queries.GetMedicalRecor
                 return Result<MedicalRecordDto>.Failure(MedicalRecordErrors.NotFound);
 
             if (currentUser.Role == UserRole.Patient && dto.PatientId != currentUser.UserId)
-                return Result<MedicalRecordDto>.Failure(MedicalRecordErrors.Unauthorized);
+                return Result<MedicalRecordDto>.Failure(CommonErrors.Unauthorized);
 
             return Result<MedicalRecordDto>.Success(dto);
         }

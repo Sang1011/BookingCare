@@ -7,7 +7,9 @@ namespace BookingCare.Application.Modules.MedicalRecords.Commands.CreateMedicalR
     public record CreateMedicalRecordCommand(
         Guid BookingId,
         string Diagnosis,
-        string? Prescription,
-        string? Notes
+        string? Treatment,
+        string? Notes,
+        DateOnly? FollowUpDate,
+        List<PrescriptionItemDto>? PrescriptionItems
     ) : IRequest<Result<MedicalRecordDto>>;
 }

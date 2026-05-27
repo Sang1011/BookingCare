@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
 
-namespace BookingCare.Application.Modules.MedicalRecords.Commands.CreateMedicalRecord
+namespace BookingCare.Application.Modules.MedicalRecords.Commands.UpdateMedicalRecord
 {
-    public class CreateMedicalRecordCommandValidator : AbstractValidator<CreateMedicalRecordCommand>
+    public class UpdateMedicalRecordCommandValidator : AbstractValidator<UpdateMedicalRecordCommand>
     {
-        public CreateMedicalRecordCommandValidator()
+        public UpdateMedicalRecordCommandValidator()
         {
-            RuleFor(x => x.BookingId)
+            RuleFor(x => x.Id)
                 .NotEmpty();
 
             RuleFor(x => x.Diagnosis)

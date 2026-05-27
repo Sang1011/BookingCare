@@ -41,13 +41,33 @@ public class CreateMedicalRecordCommandHandler(
             doctorId: doctorId,
             visitDate: booking.DoctorSchedule.WorkDate,
             diagnosis: request.Diagnosis,
-            prescription: request.Prescription,
-            notes: request.Notes);
+            treatment: request.Treatment,
+            notes: request.Notes,
+            followUpDate: request.FollowUpDate);
 
         if (result.IsFailure)
             return Result<MedicalRecordDto>.Failure(result.Error!);
 
-        medicalRecordRepository.Add(result.Value!);
+        var medicalRecord = result.Value!;
+
+        if (request.PrescriptionItems is not null)
+        {
+            foreach (var item in request.PrescriptionItems)
+            {
+                var prescriptionItem = PrescriptionItem.Create(
+                    medicalRecordId: medicalRecord.Id,
+                    medicineName: item.MedicineName,
+                    dosage: item.Dosage,
+                    frequency: item.Frequency,
+                    duration: item.Duration,
+                    instructions: item.Instructions);
+
+                medicalRecord.AddPrescriptionItem(prescriptionItem);
+            }
+        }
+
+        medicalRecordRepository.Add(medicalRecord);
+
         var saveResult = await unitOfWork.SaveChangesAsync(cancellationToken);
 
         if (saveResult.IsFailure)
