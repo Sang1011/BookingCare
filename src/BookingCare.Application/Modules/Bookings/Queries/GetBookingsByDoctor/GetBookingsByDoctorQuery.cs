@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BookingCare.Application.Modules.Bookings.Queries.GetBookingsByDoctor;
 
-public sealed record GetBookingsByDoctorQuery(
+public record GetBookingsByDoctorQuery(
     Guid DoctorId,
     int Page = 1,
     int PageSize = 20,

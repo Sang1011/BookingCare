@@ -6,6 +6,7 @@ using BookingCare.Application.Modules.Doctors.DTOs;
 using BookingCare.Application.Modules.Doctors.Queries.GetAvailableSlots;
 using BookingCare.Application.Modules.Doctors.Queries.GetDoctorById;
 using BookingCare.Application.Modules.Doctors.Queries.GetDoctors;
+using BookingCare.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,10 +58,11 @@ namespace BookingCare.Api.Endpoints
                 .Produces<ProblemDetails>(400)
                 .Produces<ProblemDetails>(403)
                 .Produces<ProblemDetails>(404)
-                .RequireAuthorization("Admin");
+                .RequireAuthorization(UserRole.Admin.ToString());
 
             return app;
         }
+
         private static async Task<IResult> GetDoctors(
             ISender sender,
             [FromQuery] string? searchName = null,

@@ -66,5 +66,6 @@ app.UseAuthorization();
 app.MapAuthEndpoints();
 app.MapDoctorEndpoints();
 app.MapBookingEndpoints();
+app.MapMedicalRecordEndpoints();
 
 app.Run();

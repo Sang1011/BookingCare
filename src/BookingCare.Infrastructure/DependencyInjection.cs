@@ -34,6 +34,7 @@ namespace BookingCare.Infrastructure
             services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
             services.AddScoped<IDoctorScheduleRepository, DoctorScheduleRepository>();
             services.AddScoped<IBookingRepository, BookingRepository>();
+            services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
 
             // Auth
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));

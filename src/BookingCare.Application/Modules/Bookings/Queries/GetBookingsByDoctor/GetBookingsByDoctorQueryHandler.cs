@@ -9,7 +9,7 @@ using MediatR;
 
 namespace BookingCare.Application.Modules.Bookings.Queries.GetBookingsByDoctor;
 
-public sealed class GetBookingsByDoctorQueryHandler(
+public class GetBookingsByDoctorQueryHandler(
     IBookingRepository bookingRepository,
     ICurrentUser currentUser
 ) : IRequestHandler<GetBookingsByDoctorQuery, Result<PagedResult<BookingDto>>>

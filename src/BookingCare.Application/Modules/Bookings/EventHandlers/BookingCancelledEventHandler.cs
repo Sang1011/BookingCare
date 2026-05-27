@@ -6,7 +6,7 @@ using MediatR;
 
 namespace BookingCare.Application.Modules.Bookings.EventHandlers;
 
-public sealed class BookingCancelledEventHandler(
+public class BookingCancelledEventHandler(
     IBookingRepository bookingRepository,
     IEmailService emailService
 ) : INotificationHandler<DomainEventNotification<BookingCancelledEvent>>

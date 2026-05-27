@@ -31,7 +31,6 @@ namespace BookingCare.Infrastructure.Cache
 
             var attempts = await db.StringIncrementAsync(key);
 
-            // Set TTL lần đầu tiên
             if (attempts == 1)
                 await db.KeyExpireAsync(key, TimeSpan.FromMinutes(LockMinutes));
 

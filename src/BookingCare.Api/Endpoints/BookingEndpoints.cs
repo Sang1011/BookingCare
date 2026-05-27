@@ -21,7 +21,7 @@ public static class BookingEndpoints
     {
         var group = app.MapGroup("/api/v1/bookings")
             .WithTags("Bookings")
-            .RequireAuthorization(); // tất cả booking endpoints đều cần auth
+            .RequireAuthorization();
 
         group.MapPost("/", CreateBooking)
             .WithSummary("Tạo lịch hẹn mới")
@@ -76,8 +76,6 @@ public static class BookingEndpoints
 
         return app;
     }
-
-    // ─── Handlers ─────────────────────────────────────────────────────────────
 
     private static async Task<IResult> CreateBooking(
         CreateBookingCommand command, ISender sender)
