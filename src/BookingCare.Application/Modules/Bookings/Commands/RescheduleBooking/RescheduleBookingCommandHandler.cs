@@ -46,7 +46,9 @@ public class RescheduleBookingCommandHandler(
             booking.PatientId,
             request.NewDoctorScheduleId,
             booking.Notes,
-            booking.Id 
+            booking.Id,
+            booking.RescheduleCount,
+            booking.DoctorRescheduleCount
         );
         bookingRepository.Add(newBooking);
 

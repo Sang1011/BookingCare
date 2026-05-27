@@ -16,6 +16,9 @@ namespace BookingCare.Domain.Entities.Booking
         public string? CancellationReason { get; private set; }
         public CancelledBy? CancelledBy { get; private set; }
         public Guid? RescheduledFromId { get; private set; }
+        public int RescheduleCount { get; private set; } = 0;
+        public int DoctorRescheduleCount { get; private set; } = 0;
+
         public DoctorSchedule DoctorSchedule { get; private set; } = default!;
         public User Patient { get; private set; } = default!;
 
@@ -54,9 +57,23 @@ namespace BookingCare.Domain.Entities.Booking
 
             if (cancelledBy == Enums.CancelledBy.Patient && Status == BookingStatus.Confirmed)
             {
-                var appointmentTime = DoctorSchedule.WorkDate.ToDateTime(DoctorSchedule.SlotStart);
-                if (appointmentTime - DateTime.UtcNow < TimeSpan.FromHours(2))
+                if (DoctorSchedule.TimeSlot.ToStartDateTime() - DateTime.UtcNow < TimeSpan.FromHours(2))
                     return Result.Failure(BookingErrors.CancellationWindowExpired);
+            }
+
+            if (cancelledBy == Enums.CancelledBy.Doctor && Status == BookingStatus.Confirmed)
+            {
+                var slotStart = DoctorSchedule.TimeSlot.ToStartDateTime();
+                if (slotStart - DateTime.UtcNow < TimeSpan.FromHours(2))
+                {
+                    RaiseDomainEvent(new DoctorPenaltyEvent(
+                        BookingId: Id,
+                        DoctorId: DoctorSchedule.DoctorId,
+                        PatientId: PatientId,
+                        CancelledAt: DateTime.UtcNow,
+                        SlotStartTime: slotStart
+                    ));
+                }
             }
 
             Status = BookingStatus.Cancelled;
@@ -82,12 +99,15 @@ namespace BookingCare.Domain.Entities.Booking
             if (Status != BookingStatus.Confirmed)
                 return Result<Guid>.Failure(BookingErrors.CannotRescheduleNonConfirmed);
 
-            var appointmentTime = DoctorSchedule.WorkDate.ToDateTime(DoctorSchedule.SlotStart);
-            if (appointmentTime - DateTime.UtcNow < TimeSpan.FromHours(2))
+            if (DoctorSchedule.TimeSlot.ToStartDateTime() - DateTime.UtcNow < TimeSpan.FromHours(2))
                 return Result<Guid>.Failure(BookingErrors.RescheduleWindowExpired);
+
+            if (RescheduleCount >= 2)
+                return Result<Guid>.Failure(BookingErrors.MaxRescheduleReached);
 
             var oldScheduleId = DoctorScheduleId;
 
+            RescheduleCount++;
             Status = BookingStatus.Rescheduled;
             Touch();
             RaiseDomainEvent(new BookingRescheduledEvent(Id, PatientId, oldScheduleId, newScheduleId));
@@ -95,20 +115,62 @@ namespace BookingCare.Domain.Entities.Booking
             return Result<Guid>.Success(oldScheduleId);
         }
 
-        public static Booking CreateRescheduled(Guid patientId, Guid scheduleId, string? notes, Guid rescheduledFromId)
+        public Result<Guid> RescheduleByDoctor(Guid newScheduleId)
+        {
+            if (Status != BookingStatus.Confirmed)
+                return Result<Guid>.Failure(BookingErrors.CannotRescheduleNonConfirmed);
+
+            if (DoctorSchedule.TimeSlot.ToStartDateTime() - DateTime.UtcNow < TimeSpan.FromHours(2))
+                return Result<Guid>.Failure(BookingErrors.RescheduleWindowExpired);
+
+            if (DoctorRescheduleCount >= 1)
+                return Result<Guid>.Failure(BookingErrors.DoctorMaxRescheduleReached);
+
+            var oldScheduleId = DoctorScheduleId;
+
+            DoctorRescheduleCount++;
+            Status = BookingStatus.Rescheduled;
+            Touch();
+            RaiseDomainEvent(new BookingRescheduledEvent(Id, PatientId, oldScheduleId, newScheduleId));
+
+            return Result<Guid>.Success(oldScheduleId);
+        }
+
+        public static Booking CreateRescheduled(
+            Guid patientId,
+            Guid scheduleId,
+            string? notes,
+            Guid rescheduledFromId,
+            int rescheduleCount,
+            int doctorRescheduleCount)
         {
             var booking = new Booking
             {
                 PatientId = patientId,
                 DoctorScheduleId = scheduleId,
-                Status = BookingStatus.Confirmed, 
+                Status = BookingStatus.Confirmed,
                 Notes = notes?.Trim(),
-                RescheduledFromId = rescheduledFromId
+                RescheduledFromId = rescheduledFromId,
+                RescheduleCount = rescheduleCount,
+                DoctorRescheduleCount = doctorRescheduleCount
             };
 
             booking.Touch();
             booking.RaiseDomainEvent(new BookingCreatedEvent(booking.Id, patientId, scheduleId));
             return booking;
+        }
+
+        public Result AutoExpire()
+        {
+            if (Status != BookingStatus.Pending)
+                return Result.Failure(BookingErrors.AlreadyFinalized);
+
+            Status = BookingStatus.Cancelled;
+            CancelledBy = Enums.CancelledBy.System;
+            CancellationReason = "Booking tự động hủy do không được xác nhận trong 24 giờ.";
+            Touch();
+            RaiseDomainEvent(new BookingAutoExpiredEvent(Id, PatientId, DoctorScheduleId));
+            return Result.Success();
         }
     }
 }

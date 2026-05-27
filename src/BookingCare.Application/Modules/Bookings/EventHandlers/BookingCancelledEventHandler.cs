@@ -15,7 +15,7 @@ public class BookingCancelledEventHandler(
         DomainEventNotification<BookingCancelledEvent> notification,
         CancellationToken ct)
     {
-        var ev = notification.Event;
+        var ev = notification.DomainEvent;
         var detail = await bookingRepository.GetDetailByIdAsync(ev.BookingId, ct);
         if (detail is null) return;
 

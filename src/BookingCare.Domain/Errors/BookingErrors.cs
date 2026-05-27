@@ -36,5 +36,11 @@ namespace BookingCare.Domain.Errors
 
         public static readonly Error DoctorReasonRequired =
             new("Booking.DoctorReasonRequired", "Bác sĩ hoặc Admin bắt buộc phải nhập lý do hủy.");
+
+        public static readonly Error MaxRescheduleReached =
+            new("Booking.MaxRescheduleReached", "Đã đạt giới hạn dời lịch (tối đa 2 lần).");
+
+        public static readonly Error DoctorMaxRescheduleReached =
+            new("Booking.DoctorMaxRescheduleReached", "Bác sĩ chỉ được dời lịch tối đa 1 lần. Lần 2 phải qua Admin.");
     }
 }
