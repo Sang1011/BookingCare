@@ -9,10 +9,15 @@ using System.Text;
 using BookingCare.Infrastructure.Auth;
 using BookingCare.Infrastructure.Cache;
 using BookingCare.Infrastructure.Email;
+using BookingCare.Infrastructure.Storage;
 using Microsoft.IdentityModel.Tokens;
 using BookingCare.Application.Common.Interfaces.Services;
 using BookingCare.Application.Common.Interfaces.Persistence;
 using BookingCare.Application.Common.Interfaces.Security;
+using BookingCare.Infrastructure.Messaging;
+using MassTransit;
+using Hangfire;
+using Hangfire.Redis.StackExchange;
 
 namespace BookingCare.Infrastructure
 {
@@ -42,8 +47,9 @@ namespace BookingCare.Infrastructure
             services.AddScoped<IPasswordService, PasswordService>();
 
             // Redis
-            services.AddSingleton<IConnectionMultiplexer>(
-                ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")!));
+            var redisConnection = ConnectionMultiplexer.Connect(
+                configuration.GetConnectionString("Redis")!);
+            services.AddSingleton<IConnectionMultiplexer>(redisConnection);
             services.AddScoped<ILoginAttemptService, RedisLoginAttemptService>();
             services.AddScoped<IEmailVerificationService, RedisEmailVerificationService>();
 
@@ -54,6 +60,16 @@ namespace BookingCare.Infrastructure
             // CurrentUser
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUser, CurrentUserService>();
+
+            // File Storage
+            services.Configure<AzureBlobStorageSettings>(
+                configuration.GetSection(AzureBlobStorageSettings.SectionName));
+
+            var storageProvider = configuration["FileStorage:Provider"];
+            if (storageProvider == "AzureBlob")
+                services.AddScoped<IFileStorageService, AzureBlobStorageService>();
+            else
+                services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
             // JWT Authentication
             var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>()!;
@@ -75,6 +91,32 @@ namespace BookingCare.Infrastructure
                 });
 
             services.AddAuthorization();
+
+            // MassTransit + RabbitMQ
+            services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((ctx, cfg) =>
+                {
+                    cfg.Host(configuration["RabbitMQ:Host"], "/", h =>
+                    {
+                        h.Username(configuration["RabbitMQ:Username"]!);
+                        h.Password(configuration["RabbitMQ:Password"]!);
+                    });
+                });
+            });
+            services.AddScoped<IMessagePublisher, MassTransitMessagePublisher>();
+
+            // Hangfire + Redis
+            services.AddHangfire(config => config
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseRedisStorage(redisConnection, new RedisStorageOptions
+                {
+                    Prefix = "hangfire:",
+                    Db = 1
+                }));
+            services.AddHangfireServer();
 
             return services;
         }

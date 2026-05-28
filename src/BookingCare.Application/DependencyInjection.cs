@@ -1,7 +1,8 @@
 ﻿using BookingCare.Application.Common.Behaviors;
+using BookingCare.Application.Common.Interfaces.Services;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using FluentValidation;
 
 namespace BookingCare.Application
 {
