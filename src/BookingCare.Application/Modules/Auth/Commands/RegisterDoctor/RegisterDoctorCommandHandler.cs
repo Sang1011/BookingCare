@@ -3,9 +3,9 @@ using BookingCare.Application.Common.Interfaces.Services;
 using BookingCare.Application.Modules.Auth.DTOs;
 using BookingCare.Domain.Common;
 using BookingCare.Domain.Entities.Auth;
-using BookingCare.Domain.Entities.Doctor;
 using BookingCare.Domain.Enums;
 using BookingCare.Domain.Errors;
+using DoctorEntity = BookingCare.Domain.Entities.Doctor.Doctor;
 using MediatR;
 
 namespace BookingCare.Application.Modules.Auth.Commands.RegisterDoctor
@@ -52,7 +52,7 @@ namespace BookingCare.Application.Modules.Auth.Commands.RegisterDoctor
             var user = userResult.Value!;
             _userRepo.Add(user);
 
-            var doctorResult = Doctor.Create(
+            var doctorResult = DoctorEntity.Create(
                 user.Id,
                 request.SpecialtyId,
                 request.LicenseNumber,

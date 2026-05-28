@@ -1,45 +1,36 @@
 ﻿using BookingCare.Application.Common.Interfaces.Services;
 using BookingCare.Application.Common.Models;
+using BookingCare.Application.Messages;
 using BookingCare.Domain.Events;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
-namespace BookingCare.Application.Modules.Auth.EventHandlers
+namespace BookingCare.Application.Modules.Auth.EventHandlers;
+
+public class EmailVerificationRequestedEventHandler(
+    IEmailVerificationService emailVerificationService,
+    IMessagePublisher publisher,
+    ILogger<EmailVerificationRequestedEventHandler> logger)
+    : INotificationHandler<DomainEventNotification<EmailVerificationRequestedEvent>>
 {
-    public class EmailVerificationRequestedEventHandler
-        : INotificationHandler<DomainEventNotification<EmailVerificationRequestedEvent>>
+    public async Task Handle(
+        DomainEventNotification<EmailVerificationRequestedEvent> notification,
+        CancellationToken ct)
     {
-        private readonly IEmailVerificationService _emailVerificationService;
-        private readonly IEmailService _emailService;
+        var e = notification.DomainEvent;
 
-        public EmailVerificationRequestedEventHandler(
-            IEmailVerificationService emailVerificationService,
-            IEmailService emailService)
-        {
-            _emailVerificationService = emailVerificationService;
-            _emailService = emailService;
-        }
+        logger.LogInformation(
+            "Generating verification token for userId: {UserId}, email: {Email}",
+            e.UserId, e.Email);
 
-        public async Task Handle(
-            DomainEventNotification<EmailVerificationRequestedEvent> notification,
-            CancellationToken ct)
-        {
-            var e = notification.DomainEvent;
+        var token = await emailVerificationService.GenerateTokenAsync(e.UserId, ct);
 
-            var token = await _emailVerificationService.GenerateTokenAsync(e.UserId, ct);
+        await publisher.PublishAsync(new EmailVerificationRequestedMessage(
+            e.UserId,
+            e.Email,
+            token), ct);
 
-            await _emailService.SendAsync(
-                e.Email,
-                "Xác nhận tài khoản BookingCare",
-                $"""
-                <h2>Xin chào!</h2>
-                <p>Cảm ơn bạn đã đăng ký tài khoản BookingCare.</p>
-                <p>Vui lòng xác nhận email bằng cách bấm vào link bên dưới:</p>
-                <a href="http://localhost:5273/api/v1/auth/verify-email?token={token}">
-                    Xác nhận email
-                </a>
-                <p>Link có hiệu lực trong 24 giờ.</p>
-                """,
-                ct);
-        }
+        logger.LogInformation(
+            "EmailVerificationRequestedMessage published. Email: {Email}", e.Email);
     }
 }

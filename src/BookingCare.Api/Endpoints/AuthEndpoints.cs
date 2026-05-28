@@ -1,13 +1,14 @@
-﻿using BookingCare.Application.Modules.Auth.Commands.Logout;
-using BookingCare.Application.Modules.Auth.Commands.VerifyEmail;
-using BookingCare.Application.Modules.Auth.Queries.GetCurrentUser;
-using BookingCare.Application.Common.Models;
+﻿using BookingCare.Application.Common.Models;
 using BookingCare.Application.Modules.Auth.Commands.ChangePassword;
 using BookingCare.Application.Modules.Auth.Commands.Login;
+using BookingCare.Application.Modules.Auth.Commands.Logout;
 using BookingCare.Application.Modules.Auth.Commands.RefreshToken;
 using BookingCare.Application.Modules.Auth.Commands.Register;
 using BookingCare.Application.Modules.Auth.Commands.RegisterDoctor;
+using BookingCare.Application.Modules.Auth.Commands.VerifyEmail;
 using BookingCare.Application.Modules.Auth.DTOs;
+using BookingCare.Application.Modules.Auth.Queries.GetCurrentUser;
+using BookingCare.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -64,7 +65,7 @@ namespace BookingCare.Api.Endpoints
                 .Produces<UserDto>(201)
                 .Produces<ProblemDetails>(400)
                 .Produces<ProblemDetails>(403)
-                .RequireAuthorization();
+                .RequireAuthorization(UserRole.Admin.ToString());
 
             group.MapGet("/verify-email", VerifyEmail)
                 .WithSummary("Xác nhận email")

@@ -1,27 +1,28 @@
 ﻿using BookingCare.Application.Common.Interfaces.Services;
 using BookingCare.Application.Common.Models;
+using BookingCare.Application.Messages;
 using BookingCare.Domain.Events;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
-namespace BookingCare.Application.Modules.Auth.EventHandlers
-{
-    public class SuspiciousLoginAttemptEventHandler
+namespace BookingCare.Application.Modules.Auth.EventHandlers;
+
+public class SuspiciousLoginAttemptEventHandler(
+    IMessagePublisher publisher,
+    ILogger<SuspiciousLoginAttemptEventHandler> logger)
     : INotificationHandler<DomainEventNotification<SuspiciousLoginAttemptEvent>>
+{
+    public async Task Handle(
+        DomainEventNotification<SuspiciousLoginAttemptEvent> notification,
+        CancellationToken ct)
     {
-        private readonly IEmailService _emailService;
+        var e = notification.DomainEvent;
 
-        public SuspiciousLoginAttemptEventHandler(IEmailService emailService)
-            => _emailService = emailService;
+        logger.LogWarning(
+            "Suspicious login attempt detected for email: {Email}", e.Email);
 
-        public async Task Handle(
-            DomainEventNotification<SuspiciousLoginAttemptEvent> notification, CancellationToken ct)
-        {
-            var e = notification.DomainEvent;
-            await _emailService.SendAsync(
-                e.Email,
-                "⚠️ Cảnh báo bảo mật",
-                "Có ai đó đang cố đăng nhập vào tài khoản của bạn. Nếu không phải bạn hãy đổi mật khẩu ngay.",
-                ct);
-        }
+        await publisher.PublishAsync(new SuspiciousLoginAttemptMessage(e.Email), ct);
+
+        logger.LogInformation("SuspiciousLoginAttemptMessage published. Email: {Email}", e.Email);
     }
 }
