@@ -8,39 +8,40 @@ using Microsoft.Extensions.Logging;
 
 namespace BookingCare.Application.Modules.Bookings.EventHandlers;
 
-public class BookingAutoExpiredEventHandler(
+public class BookingRescheduledEventHandler(
     IBookingRepository bookingRepository,
     IMessagePublisher publisher,
-    ILogger<BookingAutoExpiredEventHandler> logger)
-    : INotificationHandler<DomainEventNotification<BookingAutoExpiredEvent>>
+    ILogger<BookingRescheduledEventHandler> logger)
+    : INotificationHandler<DomainEventNotification<BookingRescheduledEvent>>
 {
     public async Task Handle(
-        DomainEventNotification<BookingAutoExpiredEvent> notification,
+        DomainEventNotification<BookingRescheduledEvent> notification,
         CancellationToken ct)
     {
         var ev = notification.DomainEvent;
 
         logger.LogInformation(
-            "Handling BookingAutoExpiredEvent. BookingId: {BookingId}", ev.BookingId);
+            "Handling BookingRescheduledEvent. BookingId: {BookingId}", ev.BookingId);
 
         var detail = await bookingRepository.GetDetailByIdAsync(ev.BookingId, ct);
         if (detail is null)
         {
             logger.LogWarning(
-                "BookingAutoExpiredEvent: booking not found. BookingId: {BookingId}", ev.BookingId);
+                "BookingRescheduledEvent: booking not found. BookingId: {BookingId}", ev.BookingId);
             return;
         }
 
-        await publisher.PublishAsync(new BookingAutoExpiredMessage(
+        await publisher.PublishAsync(new BookingRescheduledMessage(
             ev.BookingId,
             ev.PatientId,
             detail.PatientEmail,
             detail.PatientName,
             detail.DoctorName,
             detail.WorkDate,
-            detail.SlotStart), ct);
+            detail.SlotStart,
+            detail.SlotEnd), ct);
 
         logger.LogInformation(
-            "BookingAutoExpiredMessage published. BookingId: {BookingId}", ev.BookingId);
+            "BookingRescheduledMessage published. BookingId: {BookingId}", ev.BookingId);
     }
 }
