@@ -20,6 +20,11 @@ namespace BookingCare.Infrastructure.Persistence.Repositories
         public async Task<bool> LicenseNumberExistsAsync(string licenseNumber, CancellationToken ct = default)
             => await _dbSet.AnyAsync(d => d.LicenseNumber == licenseNumber, ct);
 
+        public async Task<Doctor?> GetByIdWithUserAsync(Guid id, CancellationToken ct = default)
+            => await _dbSet
+                .Include(d => d.User)
+                .FirstOrDefaultAsync(d => d.Id == id, ct);
+
         public async Task<(IReadOnlyList<DoctorDto> Items, int TotalCount)> GetPagedAsync(
             string? searchName,
             Guid? specialtyId,

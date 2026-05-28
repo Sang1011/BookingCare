@@ -11,6 +11,7 @@ namespace BookingCare.Application.Common.Interfaces.Persistence
         Task<Doctor?> GetByIdWithSpecialtyAsync(Guid id, CancellationToken ct = default);
         Task<bool> ExistsAsync(Guid userId, CancellationToken ct = default);
         Task<bool> LicenseNumberExistsAsync(string licenseNumber, CancellationToken ct = default);
+        Task<Doctor?> GetByIdWithUserAsync(Guid id, CancellationToken ct = default);
 
         Task<(IReadOnlyList<DoctorDto> Items, int TotalCount)> GetPagedAsync(
             string? searchName,

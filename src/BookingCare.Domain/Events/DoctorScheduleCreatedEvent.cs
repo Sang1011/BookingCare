@@ -8,7 +8,9 @@ namespace BookingCare.Domain.Events
     public record DoctorScheduleCreatedEvent(
         Guid ScheduleId,
         Guid DoctorId,
+        string DoctorName,
         DateOnly WorkDate,
-        TimeOnly SlotStart
+        TimeOnly SlotStart,
+        TimeOnly SlotEnd
     ) : IDomainEvent;
 }

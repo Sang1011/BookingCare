@@ -21,6 +21,7 @@ public class DoctorSchedule : AuditableEntity
 
     public static Result<DoctorSchedule> Create(
         Guid doctorId,
+        string doctorName,
         DateOnly workDate,
         TimeOnly slotStart,
         TimeOnly slotEnd,
@@ -32,7 +33,6 @@ public class DoctorSchedule : AuditableEntity
         if (maxPatients < 1)
             return Result<DoctorSchedule>.Failure(DoctorScheduleErrors.InvalidMaxPatients);
 
-        // Validation giờ nằm trong TimeSlot
         var slotResult = TimeSlot.Create(workDate, slotStart, slotEnd);
         if (slotResult.IsFailure)
             return Result<DoctorSchedule>.Failure(slotResult.Error!);
@@ -46,7 +46,7 @@ public class DoctorSchedule : AuditableEntity
         };
 
         schedule.Touch();
-        schedule.RaiseDomainEvent(new DoctorScheduleCreatedEvent(schedule.Id, doctorId, workDate, slotStart));
+        schedule.RaiseDomainEvent(new DoctorScheduleCreatedEvent(schedule.Id, doctorId, doctorName, workDate, slotStart, slotEnd));
         return Result<DoctorSchedule>.Success(schedule);
     }
     

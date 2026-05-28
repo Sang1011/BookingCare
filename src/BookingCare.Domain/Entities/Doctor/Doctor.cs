@@ -43,6 +43,7 @@ public class Doctor : AuditableEntity
 
         var doctor = new Doctor
         {
+            Id = userId,
             SpecialtyId = specialtyId,
             LicenseNumber = licenseNumber.Trim(),
             YearsOfExperience = yearsOfExperience,

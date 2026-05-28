@@ -4,10 +4,6 @@ using BookingCare.Domain.Common;
 using BookingCare.Domain.Entities.Doctor;
 using BookingCare.Domain.Errors;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
 
 namespace BookingCare.Application.Modules.Doctors.Commands.CreateSchedule
 {
@@ -40,6 +36,7 @@ namespace BookingCare.Application.Modules.Doctors.Commands.CreateSchedule
 
             var result = DoctorSchedule.Create(
                 request.DoctorId,
+                doctor.User.FullName,
                 request.WorkDate,
                 request.SlotStart,
                 request.SlotEnd,
