@@ -5,6 +5,7 @@
 
 # dotenv files
 .env
+**/appsettings.Development.json
 
 # User-specific files
 *.rsuser
@@ -483,4 +484,3 @@ $RECYCLE.BIN/
 
 # Progress tracking
 BookingCareProgress.md
-src/BookingCare.Api/appsettings.json
