@@ -13,6 +13,7 @@ namespace BookingCare.Application.Modules.Bookings.DTOs
         string PatientPhone,
         Guid DoctorId,
         string DoctorName,
+        string DoctorEmail,
         string SpecialtyName,
         decimal ConsultationFee,
         DateOnly WorkDate,

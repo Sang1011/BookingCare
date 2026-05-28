@@ -35,7 +35,7 @@ namespace BookingCare.Application.Modules.MedicalRecords.Commands.UpdateMedicalR
 
             if (request.PrescriptionItems is not null)
             {
-                var items = request.PrescriptionItems.Select(item =>
+                var newItems = request.PrescriptionItems.Select(item =>
                     PrescriptionItem.Create(
                         medicalRecordId: record.Id,
                         medicineName: item.MedicineName,
@@ -44,7 +44,7 @@ namespace BookingCare.Application.Modules.MedicalRecords.Commands.UpdateMedicalR
                         duration: item.Duration,
                         instructions: item.Instructions));
 
-                record.ReplacePrescriptionItems(items);
+                medicalRecordRepository.ReplacePrescriptionItems(record, newItems);
             }
 
             medicalRecordRepository.Update(record);

@@ -42,6 +42,18 @@ namespace BookingCare.Infrastructure.Persistence.Repositories
         public async Task<MedicalRecordDto?> GetDtoByIdAsync(Guid id, CancellationToken ct = default)
             => await Project().FirstOrDefaultAsync(m => m.Id == id, ct);
 
+        public void ReplacePrescriptionItems(MedicalRecord record, IEnumerable<PrescriptionItem> newItems)
+        {
+            var oldItems = _context.Set<PrescriptionItem>()
+                .Where(p => p.MedicalRecordId == record.Id);
+            _context.Set<PrescriptionItem>().RemoveRange(oldItems);
+
+            var newItemsList = newItems.ToList();
+            record.SetPrescriptionItems(newItemsList);
+
+            _context.Set<PrescriptionItem>().AddRange(newItemsList);
+        }
+
         private IQueryable<MedicalRecordDto> Project()
             => _dbSet
                 .AsNoTracking()

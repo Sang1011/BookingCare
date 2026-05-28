@@ -26,6 +26,7 @@ public static class BookingEndpoints
         group.MapPost("/", CreateBooking)
             .WithSummary("Tạo lịch hẹn mới")
             .WithDescription("Chỉ Patient mới có thể đặt lịch")
+            .RequireAuthorization(UserRole.Patient.ToString())
             .Produces<Guid>(201)
             .Produces<ProblemDetails>(400)
             .Produces<ProblemDetails>(409);
@@ -33,7 +34,8 @@ public static class BookingEndpoints
         group.MapGet("/", GetBookings)
             .WithSummary("Danh sách lịch hẹn")
             .WithDescription("Patient xem của mình, Doctor xem booking thuộc lịch của mình")
-            .Produces<PagedResult<BookingDto>>(200);
+            .Produces<PagedResult<BookingDto>>(200)
+            .RequireAuthorization(MultiRole.PatientOrDoctor.ToString());
 
         group.MapGet("/{id:guid}", GetBookingById)
             .WithSummary("Chi tiết lịch hẹn")
@@ -43,6 +45,7 @@ public static class BookingEndpoints
         group.MapPut("/{id:guid}/confirm", ConfirmBooking)
             .WithSummary("Xác nhận lịch hẹn")
             .WithDescription("Chỉ Doctor (của lịch đó) hoặc Admin mới có quyền xác nhận")
+            .RequireAuthorization(MultiRole.DoctorOrAdmin.ToString())
             .Produces(204)
             .Produces<ProblemDetails>(400)
             .Produces<ProblemDetails>(404);
@@ -59,20 +62,23 @@ public static class BookingEndpoints
             .WithDescription("Chỉ Patient mới được dời, slot mới phải cùng bác sĩ")
             .Produces<Guid>(200)
             .Produces<ProblemDetails>(400)
-            .Produces<ProblemDetails>(404);
+            .Produces<ProblemDetails>(404)
+            .RequireAuthorization(UserRole.Patient.ToString());
 
         group.MapPut("/{id:guid}/complete", CompleteBooking)
             .WithSummary("Đánh dấu hoàn thành")
             .WithDescription("Chỉ Doctor (của lịch đó) hoặc Admin mới có quyền")
             .Produces(204)
             .Produces<ProblemDetails>(400)
-            .Produces<ProblemDetails>(404);
+            .Produces<ProblemDetails>(404)
+            .RequireAuthorization(MultiRole.DoctorOrAdmin.ToString());
 
         group.MapGet("/doctor/{doctorId:guid}", GetBookingsByDoctor)
             .WithSummary("Danh sách booking của một bác sĩ")
             .WithDescription("Doctor xem lịch của mình, Admin xem của bất kỳ bác sĩ nào")
             .Produces<PagedResult<BookingDto>>(200)
-            .Produces<ProblemDetails>(403);
+            .Produces<ProblemDetails>(403)
+            .RequireAuthorization(MultiRole.DoctorOrAdmin.ToString());
 
         return app;
     }

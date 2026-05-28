@@ -18,5 +18,6 @@ namespace BookingCare.Application.Common.Interfaces.Persistence
             CancellationToken ct = default);
 
         Task<bool> ExistsForBookingAsync(Guid bookingId, CancellationToken ct = default);
+        void ReplacePrescriptionItems(MedicalRecord record, IEnumerable<PrescriptionItem> newItems);
     }
 }

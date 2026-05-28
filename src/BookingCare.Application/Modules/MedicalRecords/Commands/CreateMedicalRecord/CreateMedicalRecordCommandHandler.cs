@@ -54,15 +54,13 @@ public class CreateMedicalRecordCommandHandler(
         {
             foreach (var item in request.PrescriptionItems)
             {
-                var prescriptionItem = PrescriptionItem.Create(
+                medicalRecord.AddPrescriptionItem(PrescriptionItem.Create(
                     medicalRecordId: medicalRecord.Id,
                     medicineName: item.MedicineName,
                     dosage: item.Dosage,
                     frequency: item.Frequency,
                     duration: item.Duration,
-                    instructions: item.Instructions);
-
-                medicalRecord.AddPrescriptionItem(prescriptionItem);
+                    instructions: item.Instructions));
             }
         }
 

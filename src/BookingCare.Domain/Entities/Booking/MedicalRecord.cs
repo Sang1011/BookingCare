@@ -75,14 +75,14 @@ namespace BookingCare.Domain.Entities.Booking
             return Result.Success();
         }
 
-        public void ReplacePrescriptionItems(IEnumerable<PrescriptionItem> items)
+        public void AddPrescriptionItem(PrescriptionItem item)
+            => _prescriptionItems.Add(item);
+
+        public void SetPrescriptionItems(IEnumerable<PrescriptionItem> items)
         {
             _prescriptionItems.Clear();
             _prescriptionItems.AddRange(items);
         }
-
-        public void AddPrescriptionItem(PrescriptionItem item)
-            => _prescriptionItems.Add(item);
 
         public void AddAttachment(MedicalRecordAttachment attachment)
             => _attachments.Add(attachment);

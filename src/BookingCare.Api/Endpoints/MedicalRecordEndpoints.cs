@@ -2,9 +2,10 @@
 using BookingCare.Application.Modules.MedicalRecords.Commands.CreateMedicalRecord;
 using BookingCare.Application.Modules.MedicalRecords.Commands.UpdateMedicalRecord;
 using BookingCare.Application.Modules.MedicalRecords.DTOs;
-using BookingCare.Application.Modules.MedicalRecords.Queries.GetMedicalRecordById;
 using BookingCare.Application.Modules.MedicalRecords.Queries.GetMedicalRecordByBookingId;
+using BookingCare.Application.Modules.MedicalRecords.Queries.GetMedicalRecordById;
 using BookingCare.Application.Modules.MedicalRecords.Queries.GetMedicalRecords;
+using BookingCare.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,31 +24,36 @@ namespace BookingCare.Api.Endpoints
                 .WithDescription("Chỉ Doctor của booking đó mới được tạo, booking phải ở trạng thái Completed")
                 .Produces<MedicalRecordDto>(201)
                 .Produces<ProblemDetails>(400)
-                .Produces<ProblemDetails>(409);
+                .Produces<ProblemDetails>(409)
+                .RequireAuthorization(UserRole.Doctor.ToString());
 
             group.MapPut("/{id:guid}", UpdateMedicalRecord)
                 .WithSummary("Cập nhật hồ sơ bệnh án")
                 .WithDescription("Chỉ Doctor tạo record hoặc Admin")
                 .Produces(204)
                 .Produces<ProblemDetails>(400)
-                .Produces<ProblemDetails>(404);
+                .Produces<ProblemDetails>(404)
+                .RequireAuthorization(MultiRole.DoctorOrAdmin.ToString());
 
             group.MapGet("/{id:guid}", GetMedicalRecordById)
                 .WithSummary("Chi tiết hồ sơ bệnh án")
                 .WithDescription("Patient chỉ xem được của mình")
                 .Produces<MedicalRecordDto>(200)
-                .Produces<ProblemDetails>(404);
+                .Produces<ProblemDetails>(404)
+                .RequireAuthorization(MultiRole.PatientOrDoctor.ToString());
 
             group.MapGet("/", GetMedicalRecords)
                 .WithSummary("Danh sách hồ sơ bệnh án")
                 .WithDescription("Patient xem của mình, Admin xem tất cả")
-                .Produces<PagedResult<MedicalRecordDto>>(200);
+                .Produces<PagedResult<MedicalRecordDto>>(200)
+                .RequireAuthorization(MultiRole.PatientOrAdmin.ToString());
 
             group.MapGet("/by-booking/{bookingId:guid}", GetByBookingId)
                 .WithSummary("Hồ sơ bệnh án theo booking")
                 .WithDescription("Tra cứu nhanh từ bookingId")
                 .Produces<MedicalRecordDto>(200)
-                .Produces<ProblemDetails>(404);
+                .Produces<ProblemDetails>(404)
+                .RequireAuthorization(MultiRole.PatientOrDoctor.ToString());
 
             return app;
         }
