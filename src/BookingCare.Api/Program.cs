@@ -50,8 +50,29 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var app = builder.Build();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(UserRole.Patient.ToString(), policy =>
+        policy.RequireRole(UserRole.Patient.ToString()));
 
+    options.AddPolicy(UserRole.Doctor.ToString(), policy =>
+        policy.RequireRole(UserRole.Doctor.ToString()));
+
+    options.AddPolicy(UserRole.Admin.ToString(), policy =>
+        policy.RequireRole(UserRole.Admin.ToString()));
+
+    options.AddPolicy(MultiRole.DoctorOrAdmin.ToString(), policy =>
+        policy.RequireRole(UserRole.Doctor.ToString(), UserRole.Admin.ToString()));
+
+    options.AddPolicy(MultiRole.PatientOrAdmin.ToString(), policy =>
+        policy.RequireRole(UserRole.Patient.ToString(), UserRole.Admin.ToString()));
+
+    options.AddPolicy(MultiRole.PatientOrDoctor.ToString(), policy =>
+        policy.RequireRole(UserRole.Patient.ToString(), UserRole.Doctor.ToString()));
+});
+
+var app = builder.Build();
+app.UseStaticFiles();
 app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
@@ -59,18 +80,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("DoctorOrAdmin", policy =>
-        policy.RequireRole(UserRole.Doctor.ToString(), UserRole.Admin.ToString()));
-
-    options.AddPolicy("PatientOrAdmin", policy =>
-        policy.RequireRole(UserRole.Patient.ToString(), UserRole.Admin.ToString()));
-
-    options.AddPolicy("PatientOrDoctor", policy =>
-        policy.RequireRole(UserRole.Patient.ToString(), UserRole.Doctor.ToString()));
-});
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
@@ -80,5 +89,6 @@ app.MapAuthEndpoints();
 app.MapDoctorEndpoints();
 app.MapBookingEndpoints();
 app.MapMedicalRecordEndpoints();
+app.MapNotificationEndpoints();
 
 app.Run();

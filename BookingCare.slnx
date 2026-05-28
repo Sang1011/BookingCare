@@ -4,5 +4,6 @@
     <Project Path="src/BookingCare.Application/BookingCare.Application.csproj" />
     <Project Path="src/BookingCare.Domain/BookingCare.Domain.csproj" />
     <Project Path="src/BookingCare.Infrastructure/BookingCare.Infrastructure.csproj" />
+    <Project Path="src/BookingCare.Worker/BookingCare.Worker.csproj" />
   </Folder>
 </Solution>
